@@ -7,3 +7,9 @@
 - [ ] Next.js
 - [ ] Chakara UI
 - [ ] MongoDB
+
+#### Algorithms used
+- [ ] SHA256
+- [ ] Argon2
+- [ ] pbkdf2
+- [ ] AES256
