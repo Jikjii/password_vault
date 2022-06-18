@@ -1,6 +1,6 @@
 import { FastifyError } from "fastify";
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
-import { registerUserHandler } from "./user.controller";
+import { loginHandler, registerUserHandler } from "./user.controller";
 
 function userRoutes(
   app: FastifyInstance,
@@ -8,6 +8,8 @@ function userRoutes(
   done: (err?: FastifyError) => void
 ) {
   app.post("/", registerUserHandler);
+
+  app.post("/login", loginHandler);
 
   done();
 }
