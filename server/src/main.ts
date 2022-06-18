@@ -1,19 +1,39 @@
-import createServer from "./utils/createServer"
+import { FastifyInstance } from "fastify";
+import createServer from "./utils/createServer";
+import { disconnectFromDB } from "./utils/db";
+import logger from "./utils/logger";
 
-console.log("hello from main")
+function gracefulShutdown(signal: string, app: FastifyInstance) {
+  process.on(signal, async () => {
+    logger.info(`Goodbye, got signal ${signal}`);
 
-async function main() {
+    app.close();
 
-        const app = createServer()
+    await disconnectFromDB();
 
-        try{
-            const url = await app.listen(4000, '0.0.0.0')
+    logger.info("My work here is done");
 
-            console.log(`server is ready at ${url}`)
-        } catch(e){
-            console.log(e)
-            process.exit(1)
-        }
+    process.exit(0);
+  });
 }
 
-main()
+async function main() {
+  const app = createServer();
+
+  try {
+    const url = await app.listen(4000, "0.0.0.0");
+
+    logger.info(`server is ready at ${url}`);
+  } catch (e) {
+    logger.error(e);
+    process.exit(1);
+  }
+
+  const signals = ["SIGTERM", "SIGINT"]
+
+  for(let i = 0; i < signals.length; i++) {
+    gracefulShutdown(signals[i],app);
+    }
+}
+
+main();
